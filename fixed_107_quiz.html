@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PW4000--TAHTA-SORULARI Test</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 15px;
+        }
+
+        .description {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .score-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .score-box {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 24px;
+            font-weight: bold;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin: 0 20px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #2ecc71;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .status {
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 5px;
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .status.passed {
+            background-color: #27ae60;
+        }
+
+        .status.failed {
+            background-color: #e74c3c;
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .question-number {
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+            background-color: white;
+        }
+
+        .option:hover {
+            background-color: #f1f8ff;
+            border-color: #3498db;
+        }
+
+        .option.selected {
+            background-color: #d6eaf8;
+            border-color: #2980b9;
+        }
+
+        .option.correct {
+            background-color: #d5f4e6;
+            border-color: #27ae60;
+        }
+
+        .option.incorrect {
+            background-color: #fadbd8;
+            border-color: #e74c3c;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .feedback.correct {
+            background-color: #d5f4e6;
+            color: #27ae60;
+            border-left: 5px solid #27ae60;
+        }
+
+        .feedback.incorrect {
+            background-color: #fadbd8;
+            color: #e74c3c;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        #prev-btn {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        #prev-btn:hover:not(:disabled) {
+            background-color: #7f8c8d;
+        }
+
+        #next-btn {
+            background-color: #3498db;
+            color: white;
+        }
+
+        #next-btn:hover:not(:disabled) {
+            background-color: #2980b9;
+        }
+
+        #submit-btn {
+            background-color: #27ae60;
+            color: white;
+            display: none;
+        }
+
+        #submit-btn:hover {
+            background-color: #219653;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-container {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .results-title {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .final-score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #3498db;
+            margin: 20px 0;
+        }
+
+        .result-message {
+            font-size: 22px;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .passed-message {
+            background-color: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .failed-message {
+            background-color: #fadbd8;
+            color: #e74c3c;
+        }
+
+        #restart-btn {
+            background-color: #9b59b6;
+            color: white;
+            margin-top: 20px;
+            padding: 15px 40px;
+            font-size: 18px;
+        }
+
+        #restart-btn:hover {
+            background-color: #8e44ad;
+        }
+
+        .instructions {
+            background-color: #fff8e1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 5px solid #f39c12;
+        }
+
+        @media (max-width: 768px) {
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+
+            .score-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .progress-bar {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>FADEC and Engine Systems Test</h1>
+        <p class="description">Interactive multiple choice test with immediate feedback. Score 75 or above to pass.</p>
+
+        <div class="instructions">
+            <p><strong>Instructions:</strong> Select one answer for each question. You will receive immediate feedback.
+                Use Next/Previous buttons to navigate. Your score is calculated as you go. You need at least 75 points
+                to pass the test.</p>
+        </div>
+
+        <div class="score-container">
+            <div class="score-box">Score: <span id="score">0</span></div>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="status" id="status">In Progress</div>
+        </div>
+
+        <div id="question-display">
+            <!-- Questions will be displayed here -->
+        </div>
+
+        <div class="navigation">
+            <button id="prev-btn" disabled>Previous</button>
+            <button id="next-btn">Next</button>
+            <button id="submit-btn" style="display:none;">Submit Test</button>
+        </div>
+
+        <div class="results-container" id="results-container">
+            <h2 class="results-title">Test Results</h2>
+            <div class="final-score" id="final-score">0</div>
+            <div class="result-message" id="result-message"></div>
+            <p id="result-details"></p>
+            <button id="restart-btn">Restart Test</button>
+        </div>
+    </div>
+
+    <script>
+        // Questions data
+        const questions = [
+            {
+                "question": "What is the bypass ratio of the PW4000 engine?",
+                "correctAnswer": "5.1:1",
+                "wrongAnswers": [
+                    "4.5:1",
+                    "6.0:1"
+                ]
+            },
+            {
+                "question": "Approved fuel for PW4000 is:",
+                "correctAnswer": "JET A-1",
+                "wrongAnswers": [
+                    "JET A",
+                    "AVGAS"
+                ]
+            },
+            {
+                "question": "HPSOV is:",
+                "correctAnswer": "Electrically controlled, hydraulically operated",
+                "wrongAnswers": [
+                    "Hydraulically controlled",
+                    "Pneumatically operated"
+                ]
+            },
+            {
+                "question": "Engine thrust reverser operation is:",
+                "correctAnswer": "Electrically controlled, hydraulically operated",
+                "wrongAnswers": [
+                    "Mechanical",
+                    "Electrical only"
+                ]
+            },
+            {
+                "question": "At which N2 percentage ignition cuts off?",
+                "correctAnswer": "48%",
+                "wrongAnswers": [
+                    "35%",
+                    "60%"
+                ]
+            },
+            {
+                "question": "Nacelle uses which pressure?",
+                "correctAnswer": "Ram air pressure",
+                "wrongAnswers": [
+                    "Fuel pressure",
+                    "Oil pressure"
+                ]
+            },
+            {
+                "question": "TCC operates with:",
+                "correctAnswer": "Ram air pressure",
+                "wrongAnswers": [
+                    "Fuel pressure",
+                    "Hydraulic pressure"
+                ]
+            },
+            {
+                "question": "15th stage bleed air is used for:",
+                "correctAnswer": "Anti-ice",
+                "wrongAnswers": [
+                    "Cooling",
+                    "Starting"
+                ]
+            },
+            {
+                "question": "Unrated mode reference pressure:",
+                "correctAnswer": "P20 or P7",
+                "wrongAnswers": [
+                    "P49.5",
+                    "P3"
+                ]
+            },
+            {
+                "question": "How many heat exchangers exist?",
+                "correctAnswer": "Two",
+                "wrongAnswers": [
+                    "One",
+                    "Three"
+                ]
+            },
+            {
+                "question": "P2/T2 are sensed at:",
+                "correctAnswer": "Engine inlet",
+                "wrongAnswers": [
+                    "Compressor outlet",
+                    "Turbine inlet"
+                ]
+            },
+            {
+                "question": "REV system controlled by:",
+                "correctAnswer": "EIVMU",
+                "wrongAnswers": [
+                    "FCU",
+                    "AGB"
+                ]
+            },
+            {
+                "question": "ECU is also called:",
+                "correctAnswer": "EEC",
+                "wrongAnswers": [
+                    "FCU",
+                    "MCDU"
+                ]
+            },
+            {
+                "question": "Bleed system stages:",
+                "correctAnswer": "8th & 15th",
+                "wrongAnswers": [
+                    "5th & 9th",
+                    "10th & 12th"
+                ]
+            },
+            {
+                "question": "Fire PB action on HPSOV:",
+                "correctAnswer": "OFF",
+                "wrongAnswers": [
+                    "Open",
+                    "No effect"
+                ]
+            },
+            {
+                "question": "EGT data is sent to:",
+                "correctAnswer": "EEC",
+                "wrongAnswers": [
+                    "ECAM",
+                    "FCU"
+                ]
+            },
+            {
+                "question": "PW4000 PN4168 thrust rating:",
+                "correctAnswer": "68,000 lbs",
+                "wrongAnswers": [
+                    "60,000 lbs",
+                    "72,000 lbs"
+                ]
+            },
+            {
+                "question": "Oil reservoir pressurization prevents:",
+                "correctAnswer": "Cavitation",
+                "wrongAnswers": [
+                    "Overheating",
+                    "Leakage"
+                ]
+            },
+            {
+                "question": "LP fuel shut-off valve controlled by:",
+                "correctAnswer": "Master lever or Fire PB",
+                "wrongAnswers": [
+                    "EEC only",
+                    "Fuel pump"
+                ]
+            },
+            {
+                "question": "Loss of P20 causes engine to go to:",
+                "correctAnswer": "Rated N1",
+                "wrongAnswers": [
+                    "Unrated",
+                    "Idle"
+                ]
+            },
+            {
+                "question": "Fuel flow and fuel used computed by:",
+                "correctAnswer": "EEC",
+                "wrongAnswers": [
+                    "ECAM",
+                    "FCU"
+                ]
+            },
+            {
+                "question": "Only dry cranking is possible when:",
+                "correctAnswer": "No EIVMU",
+                "wrongAnswers": [
+                    "No ignition",
+                    "No FADEC"
+                ]
+            },
+            {
+                "question": "Compressor inlet pressure is:",
+                "correctAnswer": "P20",
+                "wrongAnswers": [
+                    "P49.5",
+                    "P3"
+                ]
+            },
+            {
+                "question": "EPR is calculated as:",
+                "correctAnswer": "P49.5/P20",
+                "wrongAnswers": [
+                    "P3/P20",
+                    "P7/P49.5"
+                ]
+            },
+            {
+                "question": "TLS is controlled by:",
+                "correctAnswer": "FCPC",
+                "wrongAnswers": [
+                    "EEC",
+                    "MCDU"
+                ]
+            },
+            {
+                "question": "PW4000 engine type:",
+                "correctAnswer": "High bypass, dual rotor",
+                "wrongAnswers": [
+                    "Low bypass",
+                    "Single spool"
+                ]
+            },
+            {
+                "question": "Forward engine mount located at:",
+                "correctAnswer": "Intermediate case",
+                "wrongAnswers": [
+                    "Fan case",
+                    "Turbine case"
+                ]
+            },
+            {
+                "question": "Which unit does NOT control the engine?",
+                "correctAnswer": "DMU",
+                "wrongAnswers": [
+                    "EEC",
+                    "FCU"
+                ]
+            },
+            {
+                "question": "Oil pressure below 70 PSI shows:",
+                "correctAnswer": "Red",
+                "wrongAnswers": [
+                    "Amber",
+                    "Green"
+                ]
+            },
+            {
+                "question": "Master chip detector location:",
+                "correctAnswer": "Under oil tank",
+                "wrongAnswers": [
+                    "AGB",
+                    "Bearing sump"
+                ]
+            },
+            {
+                "question": "Fuel ON solenoid controlled by:",
+                "correctAnswer": "Both",
+                "wrongAnswers": [
+                    "EEC",
+                    "EFC"
+                ]
+            },
+            {
+                "question": "Main fuel pump driven by:",
+                "correctAnswer": "Gearbox",
+                "wrongAnswers": [
+                    "Electric motor",
+                    "Hydraulic system"
+                ]
+            },
+            {
+                "question": "ENG anti-ice feedback is sensed by:",
+                "correctAnswer": "Downstream pressure",
+                "wrongAnswers": [
+                    "Upstream pressure",
+                    "Temperature"
+                ]
+            },
+            {
+                "question": "Autothrust pushbutton function:",
+                "correctAnswer": "Disengage A/THR",
+                "wrongAnswers": [
+                    "Engage A/THR",
+                    "Reset A/THR"
+                ]
+            },
+            {
+                "question": "Manual inflight autostart uses:",
+                "correctAnswer": "Both ignitions",
+                "wrongAnswers": [
+                    "Single ignition",
+                    "No ignition"
+                ]
+            },
+            {
+                "question": "Dry motoring is achieved by:",
+                "correctAnswer": "CRANK",
+                "wrongAnswers": [
+                    "START",
+                    "AUTO"
+                ]
+            },
+            {
+                "question": "Autothrust activation requires:",
+                "correctAnswer": "ADIRS + thrust lever",
+                "wrongAnswers": [
+                    "Only thrust lever",
+                    "EEC only"
+                ]
+            },
+            {
+                "question": "EGT measurement is processed by:",
+                "correctAnswer": "EEC",
+                "wrongAnswers": [
+                    "ECAM",
+                    "MCDU"
+                ]
+            },
+            {
+                "question": "Bleed system uses feedback from:",
+                "correctAnswer": "Both",
+                "wrongAnswers": [
+                    "Pressure switches",
+                    "Thermocouples"
+                ]
+            },
+            {
+                "question": "Oil pressure regulation is via:",
+                "correctAnswer": "Metering plug",
+                "wrongAnswers": [
+                    "Pump",
+                    "Valve"
+                ]
+            },
+            {
+                "question": "FADEC SYS FAULT indicates:",
+                "correctAnswer": "Thermocouple overheat",
+                "wrongAnswers": [
+                    "Fuel leak",
+                    "Oil overpressure"
+                ]
+            },
+            {
+                "question": "Gas pressure loss opens:",
+                "correctAnswer": "Integrity valve",
+                "wrongAnswers": [
+                    "PRV",
+                    "HPSOV"
+                ]
+            },
+            {
+                "question": "Fuel filter clog indication appears on:",
+                "correctAnswer": "SD F/USED",
+                "wrongAnswers": [
+                    "EWD",
+                    "MCDU"
+                ]
+            },
+            {
+                "question": "EIVMU receives N2 speed from:",
+                "correctAnswer": "EEC",
+                "wrongAnswers": [
+                    "Sensor",
+                    "PMA"
+                ]
+            },
+            {
+                "question": "ERU location:",
+                "correctAnswer": "Engine rear near EEC",
+                "wrongAnswers": [
+                    "Fan case",
+                    "AGB"
+                ]
+            },
+            {
+                "question": "PW4000 bleed configuration:",
+                "correctAnswer": "8th & 15th",
+                "wrongAnswers": [
+                    "5th & 9th",
+                    "10th & 12th"
+                ]
+            },
+            {
+                "question": "Servo fuel supplied via:",
+                "correctAnswer": "Main boost stage",
+                "wrongAnswers": [
+                    "Transfer pump",
+                    "EFC"
+                ]
+            },
+            {
+                "question": "Fuel is mixed in:",
+                "correctAnswer": "Bypass duct",
+                "wrongAnswers": [
+                    "Core",
+                    "Combustor"
+                ]
+            },
+            {
+                "question": "Forward engine mount attached to:",
+                "correctAnswer": "Intermediate case",
+                "wrongAnswers": [
+                    "Fan case",
+                    "Turbine case"
+                ]
+            },
+            {
+                "question": "T/R indication disappears when:",
+                "correctAnswer": "Fully stowed & locked",
+                "wrongAnswers": [
+                    "Unlocked",
+                    "Hydraulic off"
+                ]
+            },
+            {
+                "question": "TLS function:",
+                "correctAnswer": "Inflight T/R deployment",
+                "wrongAnswers": [
+                    "Reverse unlock",
+                    "Ground lock"
+                ]
+            },
+            {
+                "question": "Oil reservoir pressurization prevents:",
+                "correctAnswer": "Cavitation",
+                "wrongAnswers": [
+                    "Leakage",
+                    "Overheat"
+                ]
+            },
+            {
+                "question": "Master lever ON opens:",
+                "correctAnswer": "Both",
+                "wrongAnswers": [
+                    "LPSOV",
+                    "HPSOV"
+                ]
+            },
+            {
+                "question": "FAV function:",
+                "correctAnswer": "Cooling modulation",
+                "wrongAnswers": [
+                    "Fuel regulation",
+                    "Bleed control"
+                ]
+            },
+            {
+                "question": "Vibration sensors monitor:",
+                "correctAnswer": "N1 bearing & P flange",
+                "wrongAnswers": [
+                    "N2 only",
+                    "Fan only"
+                ]
+            },
+            {
+                "question": "ENG anti-ice valve feedback via:",
+                "correctAnswer": "Pressure",
+                "wrongAnswers": [
+                    "Temperature",
+                    "Position"
+                ]
+            },
+            {
+                "question": "Only dry cranking is possible with:",
+                "correctAnswer": "No EIVMU",
+                "wrongAnswers": [
+                    "No ignition",
+                    "No fuel"
+                ]
+            },
+            {
+                "question": "FADEC power changeover is:",
+                "correctAnswer": "Automatic",
+                "wrongAnswers": [
+                    "Manual",
+                    "Ground only"
+                ]
+            },
+            {
+                "question": "N2 PMA speed to EEC via:",
+                "correctAnswer": "EIVMU",
+                "wrongAnswers": [
+                    "Sensor",
+                    "MCDU"
+                ]
+            },
+            {
+                "question": "Which mode when P20 is lost?",
+                "correctAnswer": "Rated N1",
+                "wrongAnswers": [
+                    "Unrated",
+                    "Idle"
+                ]
+            },
+            {
+                "question": "Thrust regulation controlled by:",
+                "correctAnswer": "EEC",
+                "wrongAnswers": [
+                    "FCU",
+                    "ECAM"
+                ]
+            },
+            {
+                "question": "Oil pressure low warning shown on:",
+                "correctAnswer": "EWD",
+                "wrongAnswers": [
+                    "SD",
+                    "MCDU"
+                ]
+            },
+            {
+                "question": "Bleed feedback at 2.9 uses:",
+                "correctAnswer": "Thermocouple",
+                "wrongAnswers": [
+                    "Pressure switch",
+                    "Valve"
+                ]
+            },
+            {
+                "question": "Fire detector system type:",
+                "correctAnswer": "Dual loop",
+                "wrongAnswers": [
+                    "Pneumatic",
+                    "Electrical"
+                ]
+            },
+            {
+                "question": "Preservation purpose:",
+                "correctAnswer": "Corrosion protection",
+                "wrongAnswers": [
+                    "Cooling",
+                    "Lubrication"
+                ]
+            },
+            {
+                "question": "No.3 bearing cooling air from:",
+                "correctAnswer": "12th stage",
+                "wrongAnswers": [
+                    "8th stage",
+                    "15th stage"
+                ]
+            },
+            {
+                "question": "EEC provides EGT limit protection:",
+                "correctAnswer": "Only during ground cooling",
+                "wrongAnswers": [
+                    "Always",
+                    "Never"
+                ]
+            },
+            {
+                "question": "Engine oil breather system vents:",
+                "correctAnswer": "Oil vapor",
+                "wrongAnswers": [
+                    "Fuel",
+                    "Air only"
+                ]
+            },
+            {
+                "question": "Fuel used and FF calculated by:",
+                "correctAnswer": "EEC",
+                "wrongAnswers": [
+                    "ECAM",
+                    "FCU"
+                ]
+            },
+            {
+                "question": "Oil filter clogged indication at:",
+                "correctAnswer": "70 PSI",
+                "wrongAnswers": [
+                    "50 PSI",
+                    "90 PSI"
+                ]
+            },
+            {
+                "question": "Which component does not use fuel muscle?",
+                "correctAnswer": "TVBC",
+                "wrongAnswers": [
+                    "FMV",
+                    "EFC"
+                ]
+            },
+            {
+                "question": "ENG START selector to NORM:",
+                "correctAnswer": "Immediate de-energize",
+                "wrongAnswers": [
+                    "Delayed de-energize",
+                    "No effect"
+                ]
+            },
+            {
+                "question": "When no EIVMU available:",
+                "correctAnswer": "Dry start only",
+                "wrongAnswers": [
+                    "Wet start",
+                    "Auto start"
+                ]
+            },
+            {
+                "question": "NCC air source:",
+                "correctAnswer": "Fan air",
+                "wrongAnswers": [
+                    "Core air",
+                    "Bleed air"
+                ]
+            },
+            {
+                "question": "EEC receives digital inputs from:",
+                "correctAnswer": "EIVMU",
+                "wrongAnswers": [
+                    "ECAM",
+                    "ADIRS"
+                ]
+            },
+            {
+                "question": "Vibration green pulse indicates:",
+                "correctAnswer": "Out of limit",
+                "wrongAnswers": [
+                    "Normal",
+                    "Sensor failure"
+                ]
+            },
+            {
+                "question": "Autostart abnormal recovery:",
+                "correctAnswer": "Dry control restart",
+                "wrongAnswers": [
+                    "Abort",
+                    "Manual only"
+                ]
+            },
+            {
+                "question": "Fuel drain mast connected to:",
+                "correctAnswer": "2.5 actuator",
+                "wrongAnswers": [
+                    "TCC",
+                    "Pump"
+                ]
+            }
+        ];
+
+        // Shuffle function for array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize test
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let shuffledQuestions = shuffleArray([...questions]);
+
+        // Shuffle options for each question
+        shuffledQuestions.forEach(q => {
+            q.options = shuffleArray([q.correctAnswer, ...q.wrongAnswers]);
+        });
+
+        // DOM Elements
+        const questionDisplay = document.getElementById('question-display');
+        const scoreElement = document.getElementById('score');
+        const progressElement = document.getElementById('progress');
+        const statusElement = document.getElementById('status');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const resultsContainer = document.getElementById('results-container');
+        const finalScoreElement = document.getElementById('final-score');
+        const resultMessageElement = document.getElementById('result-message');
+        const resultDetailsElement = document.getElementById('result-details');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Display current question
+        function displayQuestion() {
+            const question = shuffledQuestions[currentQuestionIndex];
+            const questionNumber = currentQuestionIndex + 1;
+            const totalQuestions = shuffledQuestions.length;
+
+            // Update progress bar
+            const progressPercent = (currentQuestionIndex / (totalQuestions - 1)) * 100;
+            progressElement.style.width = `${progressPercent}%`;
+
+            // Update navigation buttons
+            prevBtn.disabled = currentQuestionIndex === 0;
+
+            if (currentQuestionIndex === totalQuestions - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+
+            // Create question HTML
+            let optionsHTML = '';
+            question.options.forEach((option, index) => {
+                let optionClass = 'option';
+                let isSelected = userAnswers[currentQuestionIndex] === option;
+
+                if (isSelected) {
+                    optionClass += ' selected';
+
+                    // If answer has been submitted, show correct/incorrect
+                    if (userAnswers[currentQuestionIndex] !== null) {
+                        if (option === question.correctAnswer) {
+                            optionClass += ' correct';
+                        } else {
+                            optionClass += ' incorrect';
+                        }
+                    }
+                }
+
+                optionsHTML += `
+                    <div class="${optionClass}" data-index="${index}">
+                        ${option}
+                    </div>
+                `;
+            });
+
+            // Create feedback HTML if answer has been submitted
+            let feedbackHTML = '';
+            if (userAnswers[currentQuestionIndex] !== null) {
+                const isCorrect = userAnswers[currentQuestionIndex] === question.correctAnswer;
+                feedbackHTML = `
+                    <div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">
+                        ${isCorrect ? '✓ Correct!' : '✗ Incorrect!'} The correct answer is: ${question.correctAnswer}
+                    </div>
+                `;
+            }
+
+            questionDisplay.innerHTML = `
+                <div class="question-container">
+                    <div class="question-number">Question ${questionNumber} of ${totalQuestions}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options-container">
+                        ${optionsHTML}
+                    </div>
+                    ${feedbackHTML}
+                </div>
+            `;
+
+            // Add event listeners to options
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', () => {
+                    if (userAnswers[currentQuestionIndex] === null) {
+                        const selectedOption = option.textContent.trim();
+                        userAnswers[currentQuestionIndex] = selectedOption;
+
+                        // Check if answer is correct
+                        if (selectedOption === question.correctAnswer) {
+                            score++;
+                            scoreElement.textContent = score;
+
+                            // Update status based on score
+                            updateStatus();
+                        }
+
+                        // Redisplay question to show feedback
+                        displayQuestion();
+                    }
+                });
+            });
+
+            // Update score display
+            scoreElement.textContent = score;
+        }
+
+        // Update pass/fail status display
+        function updateStatus() {
+            const totalQuestions = shuffledQuestions.length;
+            const percentage = Math.round((score / totalQuestions) * 100);
+
+            if (percentage >= 75) {
+                statusElement.textContent = "Passing";
+                statusElement.className = "status passed";
+            } else {
+                statusElement.textContent = "Failing";
+                statusElement.className = "status failed";
+            }
+        }
+
+        // Show results
+        function showResults() {
+            const totalQuestions = shuffledQuestions.length;
+            const percentage = Math.round((score / totalQuestions) * 100);
+            const passed = percentage >= 75;
+
+            finalScoreElement.textContent = `${score}/${totalQuestions} (${percentage}%)`;
+
+            if (passed) {
+                resultMessageElement.textContent = "Congratulations! You passed the test!";
+                resultMessageElement.className = "result-message passed-message";
+            } else {
+                resultMessageElement.textContent = "Sorry, you did not pass. Try again!";
+                resultMessageElement.className = "result-message failed-message";
+            }
+
+            resultDetailsElement.textContent = `You answered ${score} out of ${totalQuestions} questions correctly. You need at least 75% (${Math.ceil(totalQuestions * 0.75)} correct answers) to pass.`;
+
+            // Hide question display and show results
+            questionDisplay.style.display = 'none';
+            document.querySelector('.navigation').style.display = 'none';
+            resultsContainer.style.display = 'block';
+        }
+
+        // Event listeners for navigation
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < shuffledQuestions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            }
+        });
+
+        submitBtn.addEventListener('click', showResults);
+
+        restartBtn.addEventListener('click', () => {
+            // Reset test
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            shuffledQuestions = shuffleArray([...questions]);
+
+            // Shuffle options for each question
+            shuffledQuestions.forEach(q => {
+                q.options = shuffleArray([q.correctAnswer, ...q.wrongAnswers]);
+            });
+
+            // Reset UI
+            questionDisplay.style.display = 'block';
+            document.querySelector('.navigation').style.display = 'flex';
+            resultsContainer.style.display = 'none';
+            statusElement.textContent = "In Progress";
+            statusElement.className = "status";
+
+            displayQuestion();
+        });
+
+        // Initialize test display
+        displayQuestion();
+        updateStatus();
+    </script>
+</body>
+
+</html>
