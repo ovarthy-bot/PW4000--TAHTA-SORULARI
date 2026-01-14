@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PW4000--78EA TAHTA-SORULARI Test</title>
+    <title>PW4000--TAHTA-SORULARI Test</title>
     <style>
         * {
             box-sizing: border-box;
@@ -160,7 +160,6 @@
             padding: 15px;
             border-radius: 8px;
             margin-top: 20px;
-            display: none;
             font-weight: bold;
         }
 
@@ -226,7 +225,6 @@
         }
 
         .results-container {
-            display: none;
             text-align: center;
             padding: 30px;
             background-color: #f9f9f9;
@@ -284,6 +282,63 @@
             border-left: 5px solid #f39c12;
         }
 
+        /* Yanlış sorular için yeni stiller */
+        .wrong-questions-container {
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .wrong-questions-title {
+            color: #e74c3c;
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e74c3c;
+        }
+
+        .wrong-question-item {
+            background-color: #fff;
+            border: 1px solid #fadbd8;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .wrong-question-number {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .wrong-question-text {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .wrong-answer {
+            color: #e74c3c;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .correct-answer {
+            color: #27ae60;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .no-wrong-answers {
+            background-color: #d5f4e6;
+            color: #27ae60;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+
         @media (max-width: 768px) {
             .options-container {
                 grid-template-columns: 1fr;
@@ -297,6 +352,10 @@
             .progress-bar {
                 width: 100%;
                 margin: 10px 0;
+            }
+
+            .wrong-question-item {
+                padding: 15px;
             }
         }
     </style>
@@ -331,11 +390,15 @@
             <button id="submit-btn" style="display:none;">Submit Test</button>
         </div>
 
-        <div class="results-container" id="results-container">
+        <div class="results-container" id="results-container" style="display:none;">
             <h2 class="results-title">Test Results</h2>
             <div class="final-score" id="final-score">0</div>
             <div class="result-message" id="result-message"></div>
             <p id="result-details"></p>
+            
+            <!-- Yanlış soruların listeleneceği bölüm -->
+            <div class="wrong-questions-container" id="wrong-questions-container"></div>
+            
             <button id="restart-btn">Restart Test</button>
         </div>
     </div>
@@ -1001,6 +1064,7 @@
         const finalScoreElement = document.getElementById('final-score');
         const resultMessageElement = document.getElementById('result-message');
         const resultDetailsElement = document.getElementById('result-details');
+        const wrongQuestionsContainer = document.getElementById('wrong-questions-container');
         const restartBtn = document.getElementById('restart-btn');
 
         // Display current question
@@ -1029,17 +1093,18 @@
             question.options.forEach((option, index) => {
                 let optionClass = 'option';
                 let isSelected = userAnswers[currentQuestionIndex] === option;
+                const isCorrectAnswer = option === question.correctAnswer;
 
                 if (isSelected) {
                     optionClass += ' selected';
+                }
 
-                    // If answer has been submitted, show correct/incorrect
-                    if (userAnswers[currentQuestionIndex] !== null) {
-                        if (option === question.correctAnswer) {
-                            optionClass += ' correct';
-                        } else {
-                            optionClass += ' incorrect';
-                        }
+                // If user has answered this question
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    if (isCorrectAnswer) {
+                        optionClass += ' correct'; // Doğru şık her zaman yeşil
+                    } else if (isSelected && !isCorrectAnswer) {
+                        optionClass += ' incorrect'; // Seçilen yanlış şık kırmızı
                     }
                 }
 
@@ -1054,9 +1119,13 @@
             let feedbackHTML = '';
             if (userAnswers[currentQuestionIndex] !== null) {
                 const isCorrect = userAnswers[currentQuestionIndex] === question.correctAnswer;
+                const feedbackClass = isCorrect ? 'correct' : 'incorrect';
+                const feedbackIcon = isCorrect ? '✓' : '✗';
+                const feedbackText = isCorrect ? 'Correct!' : 'Incorrect!';
+                
                 feedbackHTML = `
-                    <div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">
-                        ${isCorrect ? '✓ Correct!' : '✗ Incorrect!'} The correct answer is: ${question.correctAnswer}
+                    <div class="feedback ${feedbackClass}">
+                        ${feedbackIcon} ${feedbackText} The correct answer is: <strong>${question.correctAnswer}</strong>
                     </div>
                 `;
             }
@@ -1083,12 +1152,12 @@
                         if (selectedOption === question.correctAnswer) {
                             score++;
                             scoreElement.textContent = score;
-
-                            // Update status based on score
-                            updateStatus();
                         }
 
-                        // Redisplay question to show feedback
+                        // Update status based on score
+                        updateStatus();
+
+                        // Redisplay question to show feedback and correct answer
                         displayQuestion();
                     }
                 });
@@ -1112,6 +1181,41 @@
             }
         }
 
+        // Yanlış soruları listeleme fonksiyonu
+        function displayWrongQuestions() {
+            const wrongQuestionsHTML = [];
+            
+            shuffledQuestions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const correctAnswer = question.correctAnswer;
+                
+                // Eğer soru yanlış cevaplandıysa
+                if (userAnswer !== null && userAnswer !== correctAnswer) {
+                    wrongQuestionsHTML.push(`
+                        <div class="wrong-question-item">
+                            <div class="wrong-question-number">Question ${index + 1}</div>
+                            <div class="wrong-question-text">${question.question}</div>
+                            <div class="wrong-answer">Your answer: ${userAnswer}</div>
+                            <div class="correct-answer">Correct answer: ${correctAnswer}</div>
+                        </div>
+                    `);
+                }
+            });
+            
+            if (wrongQuestionsHTML.length > 0) {
+                wrongQuestionsContainer.innerHTML = `
+                    <h3 class="wrong-questions-title">Questions You Answered Incorrectly (${wrongQuestionsHTML.length})</h3>
+                    ${wrongQuestionsHTML.join('')}
+                `;
+            } else {
+                wrongQuestionsContainer.innerHTML = `
+                    <div class="no-wrong-answers">
+                        ✓ Perfect! You answered all questions correctly!
+                    </div>
+                `;
+            }
+        }
+
         // Show results
         function showResults() {
             const totalQuestions = shuffledQuestions.length;
@@ -1129,6 +1233,9 @@
             }
 
             resultDetailsElement.textContent = `You answered ${score} out of ${totalQuestions} questions correctly. You need at least 75% (${Math.ceil(totalQuestions * 0.75)} correct answers) to pass.`;
+
+            // Yanlış soruları göster
+            displayWrongQuestions();
 
             // Hide question display and show results
             questionDisplay.style.display = 'none';
@@ -1171,6 +1278,7 @@
             resultsContainer.style.display = 'none';
             statusElement.textContent = "In Progress";
             statusElement.className = "status";
+            wrongQuestionsContainer.innerHTML = '';
 
             displayQuestion();
         });
