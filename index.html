@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PP2 V2500 Test Uygulaması</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">POWERPLANT 2 · V2500</p>
+        <h1>PP2 V2500 Test Uygulaması</h1>
+        <p class="sub">224 soru · 3 şık · doğru cevap anlık gösterilir</p>
+      </div>
+      <div class="score-card">
+        <span>Skor</span>
+        <strong id="scoreText">0 / 0</strong>
+      </div>
+    </header>
+
+    <section class="toolbar">
+      <label>
+        Kategori
+        <select id="categoryFilter">
+          <option value="all">Tüm kategoriler</option>
+        </select>
+      </label>
+      <label>
+        Arama
+        <input id="searchInput" type="search" placeholder="Soru veya cevap ara..." />
+      </label>
+      <button id="shuffleBtn" type="button">Soruları Karıştır</button>
+      <button id="resetBtn" type="button" class="ghost">Sıfırla</button>
+    </section>
+
+    <section class="progress-wrap">
+      <div class="progress-meta">
+        <span id="progressText">Soru 1 / 224</span>
+        <span id="answeredText">Cevaplanan: 0</span>
+      </div>
+      <div class="progress"><div id="progressBar"></div></div>
+    </section>
+
+    <section class="question-card" aria-live="polite">
+      <div class="question-top">
+        <span id="categoryBadge" class="badge"></span>
+        <span id="questionNo" class="question-no"></span>
+      </div>
+      <h2 id="questionText"></h2>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback hidden"></div>
+    </section>
+
+    <nav class="nav-buttons">
+      <button id="prevBtn" type="button" class="ghost">Önceki</button>
+      <button id="showAnswerBtn" type="button" class="ghost">Cevabı Göster</button>
+      <button id="nextBtn" type="button">Sonraki</button>
+    </nav>
+
+    <section class="list-panel">
+      <details>
+        <summary>Tüm soru listesi</summary>
+        <div id="questionList" class="question-list"></div>
+      </details>
+    </section>
+  </main>
+
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
